@@ -237,9 +237,9 @@ with st.sidebar:
 
     _api_key = st.text_input(
         "API Key",
-        value=_llm_cfg.api_key,
+        value=_llm_cfg.api_key or os.environ.get("DEEPSEEK_API_KEY", ""),
         type="password",
-        help="将以明文保存到 output/context/llm_config.json，请使用专用 key。",
+        help="将以明文保存到 output/context/llm_config.json。留空时自动使用 DEEPSEEK_API_KEY 环境变量。",
     )
     _model_default = _llm_cfg.model or PROVIDER_PRESETS[_provider]["default_model"]
     _model = st.text_input(
@@ -731,7 +731,7 @@ if direct_start or (uploaded_file is not None):
                 try:
                     _llm_cfg = LLMConfig(
                         provider=_runtime.get("provider", "deepseek"),
-                        api_key=_runtime.get("api_key", ""),
+                        api_key=_runtime.get("api_key", "") or os.environ.get("DEEPSEEK_API_KEY", ""),
                         base_url=_runtime.get("base_url", ""),
                         model=_runtime.get("model", ""),
                         temperature=float(_runtime.get("temperature", 0.2)),

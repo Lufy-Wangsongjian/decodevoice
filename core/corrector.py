@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import re
 import time
 from dataclasses import dataclass
@@ -93,9 +94,10 @@ class LLMConfig:
     @classmethod
     def from_dict(cls, data: dict | None) -> "LLMConfig":
         data = data or {}
+        api_key = data.get("api_key", "") or os.environ.get("DEEPSEEK_API_KEY", "")
         return cls(
             provider=data.get("provider", "deepseek"),
-            api_key=data.get("api_key", "") or "",
+            api_key=api_key,
             base_url=data.get("base_url", "") or "",
             model=data.get("model", "") or "",
             timeout=int(data.get("timeout", 60) or 60),
@@ -108,13 +110,13 @@ class LLMConfig:
 def load_llm_config() -> LLMConfig:
     """读取 llm_config.json，文件不存在时返回默认配置（enabled=False）。"""
     if not LLM_CONFIG_FILE.exists():
-        return LLMConfig()
+        return LLMConfig(api_key=os.environ.get("DEEPSEEK_API_KEY", ""))
     try:
         data = json.loads(LLM_CONFIG_FILE.read_text(encoding="utf-8"))
         return LLMConfig.from_dict(data)
     except Exception as e:
         logger.warning(f"读取 LLM 配置失败，使用默认: {e}")
-        return LLMConfig()
+        return LLMConfig(api_key=os.environ.get("DEEPSEEK_API_KEY", ""))
 
 
 def save_llm_config(cfg: LLMConfig) -> None:
