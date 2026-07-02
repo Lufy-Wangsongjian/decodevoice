@@ -18,6 +18,9 @@ import json
 import logging
 import os
 import sys
+
+from dotenv import load_dotenv
+load_dotenv()
 import time
 from datetime import datetime
 from io import StringIO
