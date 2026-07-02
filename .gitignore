@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# 虚拟环境
+venv/
+.venv/
+
+# 上传文件（音视频原件）
+uploads/
+
+# 输出产物（pkl/wav/srt/音频等）
+output/
+
+# 分发包
+dist/*.zip
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 录音文本文件（大文件）
+yanqiu*.txt
+
+# macOS
+.DS_Store
+
+# 环境变量
+.env
+.env.local

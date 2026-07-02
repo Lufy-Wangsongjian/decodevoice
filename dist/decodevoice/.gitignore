@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+uploads/
+output/
+*.wav
+*.mp3
+*.mp4
+.env
+.DS_Store
