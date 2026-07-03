@@ -29,7 +29,7 @@ from pathlib import Path
 import streamlit as st
 
 from core.extractor import extract_audio
-from core.diarizer import AudioTranscriber, TranscriptionResult
+from core.diarizer import AudioTranscriber, SpeakerSegment, TranscriptionResult
 from core.context import (
     CONTEXT_DIR,
     Glossary,
@@ -588,10 +588,25 @@ if direct_start or (uploaded_file is not None):
                 persist_dir = OUTPUT_DIR / "audio"
                 persist_dir.mkdir(exist_ok=True)
                 persist_path = persist_dir / f"{Path(uploaded_file_name).stem}{suffix}"
-                if not persist_path.exists() or persist_path.stat().st_size != input_path.stat().st_size:
+                if not persist_path.exists():
+                    if not input_path.exists():
+                        raise FileNotFoundError(
+                            f"音频源文件不存在: {input_path}\n"
+                            f"可能已被清理，请重新上传该文件。"
+                        )
+                    import shutil
+                    shutil.copy2(str(input_path), str(persist_path))
+                elif persist_path.stat().st_size != input_path.stat().st_size:
                     import shutil
                     shutil.copy2(str(input_path), str(persist_path))
                 audio_path = str(persist_path)
+
+            # 最终校验：转录目标音频文件必须存在
+            if not Path(audio_path).exists():
+                raise FileNotFoundError(
+                    f"音频文件丢失: {audio_path}\n"
+                    f"请重新上传文件后再试。"
+                )
 
             # 更新历史记录中的 audio_path
             save_history_entry({
